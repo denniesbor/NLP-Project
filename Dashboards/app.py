@@ -5,11 +5,8 @@ import warnings
 import pandas as pd
 import numpy as np
 import pandas as pd
-import tweepy
 import json
-from tweepy import OAuthHandler
 import re
-from textblob import TextBlob
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 warnings.filterwarnings("ignore")
