@@ -4,7 +4,6 @@ import warnings
 
 import pandas as pd
 import numpy as np
-import pandas as pd
 import json
 import re
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
