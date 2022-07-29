@@ -1,32 +1,83 @@
 import streamlit as st
 import warnings
-
+import os
+import json
+import re
+from PIL import Image
+from urllib.parse import quote
 
 import pandas as pd
 import numpy as np
-import json
-import re
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
-warnings.filterwarnings("ignore")
-
-#To Hide Warnings
-st.set_option('deprecation.showfileUploaderEncoding', False)
-st.set_option('deprecation.showPyplotGlobalUse', False)
 # Viz Pkgs
 import matplotlib.pyplot as plt
+import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')
-import seaborn as sns
-#sns.set_style('darkgrid')
+
+#Hide Warnings
+warnings.filterwarnings("ignore")
+st.set_option('deprecation.showfileUploaderEncoding', False)
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
+# import database database
+import sqlalchemy as db
+from sqlalchemy import Table, Column, INTEGER, MetaData
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+#load secret files
+from dotenv import load_dotenv
+load_dotenv()
+
+# style
 STYLE = """
 <style>
 img {
     max-width: 100%;
 }
 </style> """
+
+# configure db info
+USER = os.getenv("user")
+PASSWORD = os.getenv("password")
+HOST = os.getenv("host")
+PORT = 3306
+DATABASE = "nlp"
+TABLENAME = "us_house_reps"
+
+engine = db.create_engine(f"mysql+pymysql://{USER}:%s@{HOST}:{PORT}/{DATABASE}" % quote(PASSWORD))
+connection = engine.connect()
+metadata = db.MetaData()
+housereps = db.Table(f'{TABLENAME}', metadata, autoload=True, autoload_with=engine)
+
+# CREATE THE SESSION OBJECT
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# make queries
+query = session.query(housereps).with_entities(housereps.c.tweet_id, \
+                                               housereps.c.Party, housereps.c.text, \
+                                               housereps.c.created_at, housereps.c['Compound Sentiment'],\
+                                               housereps.c['Sentiment Value'])
+
+try:
+  df = pd.read_csv('all_tweets.csv')
+except FileNotFoundError:
+  
+    # convert to a dataframe
+    df = pd.DataFrame(query)
+    df.columns = query[0].keys()
+
+    # remove empty tweets
+    df = df[df.text != '']
+
+    # drop duplicates
+    df = df.drop_duplicates(subset = ['text'])
+    df.reset_index(inplace=True, drop=False)
+    df.to_csv('all_tweets.csv', index=False)
 
 def main():
 
@@ -35,12 +86,25 @@ def main():
 	"""
     st.markdown(html_temp, unsafe_allow_html=True)
 
-    from PIL import Image
     image = Image.open('Logo1.jpg')
     st.image(image, caption='Twitter for Analytics',use_column_width=True)
     
-    
     # load the dataframe
+    try:
+        df = pd.read_csv('all_tweets.csv')
+    except FileNotFoundError:
+  
+        # convert to query results to a dataframe
+        df = pd.DataFrame(query)
+        df.columns = query[0].keys()
+
+        # remove empty tweets
+        df = df[df.text != '']
+
+        # drop duplicates
+        df = df.drop_duplicates(subset = ['text'])
+        df.reset_index(inplace=True, drop=False)
+        df.to_csv('all_tweets.csv', index=False)
     
     df = pd.read_csv('rutoraila.csv')
     
