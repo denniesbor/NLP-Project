@@ -52,9 +52,9 @@ print(os.environ)
 
 if (db_user==None):
     
-    db_user = os.environ["db_user"]
-    db_password = os.environ["db_password"]
-    db_host = os.environ["db_host"]
+    db_user = st.secrets["db_creds"]["db_user"]
+    db_password = st.secrets["db_creds"]["db_password"]
+    db_host = st.secrets["db_creds"]["db_host"]
     
 print(db_user,db_host)
 
