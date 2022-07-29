@@ -41,12 +41,22 @@ from plotly.subplots import make_subplots
 load_dotenv()
 
 # configure db info
-USER = os.getenv("user")
-PASSWORD = os.getenv("password")
-HOST = os.getenv("host")
+db_user = os.getenv("user")
+db_password = os.getenv("password")
+db_host = os.getenv("host")
 PORT = 3306
 DATABASE = "nlp"
 TABLENAME = "us_house_reps"
+
+print(os.environ)
+
+if (db_user==None):
+    
+    db_user = os.environ["db_user"]
+    db_password = os.environ["db_password"]
+    db_host = os.environ["db_host"]
+    
+print(db_user,db_host)
 
 def connect_db():
     ''' Function that creates a connection between the 
@@ -57,7 +67,7 @@ def connect_db():
     '''
     try:
         print('Connecting database')
-        engine = db.create_engine(f"mysql+pymysql://{USER}:%s@{HOST}:{PORT}/{DATABASE}" % quote(PASSWORD))
+        engine = db.create_engine(f"mysql+pymysql://{db_user}:%s@{db_host}:{PORT}/{DATABASE}" % quote(db_password))
         connection = engine.connect()
         metadata = db.MetaData()
         housereps = db.Table(f'{TABLENAME}', metadata, autoload=True, autoload_with=engine)
@@ -228,7 +238,6 @@ def main():
 
     if st.button("Exit"):
         st.balloons()
-
 
 
 if __name__ == '__main__':
