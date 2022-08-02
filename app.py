@@ -375,12 +375,12 @@ def main():
             st.metric(label="Number of Tweets", value=len(top_df))
             
         with col5:
-            st.markdown(f"<h3 style='text-align: center; color: white; font-size:20px; background-color:black;'>Sentiment Distribution - {option}, {type}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center; color: white; font-size:20px; background-color:black;'>Sentiment Distribution({option}-{type})</h3>", unsafe_allow_html=True)
             fig = chart_type_plot(chart_type,top_df)  
             st.plotly_chart(fig, use_container_width=True,config = {'displayModeBar': False})
         
         with col6:
-            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Time Based Sentiment Sentiments - {option}, {type}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Time Based Sentiment Sentiments({option}-{type})</h3>", unsafe_allow_html=True)
             fig = get_time_sentiments(top_df)
             # st.pyplot(fig_wc)
             st.plotly_chart(fig, use_container_width=True,config = {'displayModeBar': False})
@@ -389,17 +389,17 @@ def main():
         
         with col7:
             tweets = top_df.sample(n=100, random_state=101)
-            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Sample {len(tweets)} Tweets - {option}, {type}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Sample {len(tweets)} Tweets({option}-{type})</h3>", unsafe_allow_html=True)
             tweets.reset_index(drop=True, inplace=True)
             st.dataframe(tweets[['Party','text']])
             
         with col8:
-            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Word Cloud - {option}, {type}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Word Cloud({option}-{type})</h3>", unsafe_allow_html=True)
             fig_wc = plot_wc(top_df)
             st.pyplot(fig_wc)
             
         with col9:
-            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Tree Map of 70 Common Words - {option}, {type}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Tree Map of 70 Common Words({option}-{type})</h3>", unsafe_allow_html=True)
             fig = tree_map(top_df)
             st.plotly_chart(fig, use_container_width=True,config = {'displayModeBar': False})
    
