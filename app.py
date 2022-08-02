@@ -139,14 +139,13 @@ if 'df' not in st.session_state:
     try:
         df = pd.read_csv(f'{file}.csv')
     except FileNotFoundError:
-        
         subprocess.run('rm data_20*',shell=True)
         df = connect_db()
 
         # drop duplicates
         df = df.drop_duplicates(subset = ['text'])
         df.reset_index(inplace=True, drop=False)
-        df.to_csv(f'{file}.csv', index=False)
+        # df.to_csv(f'{file}.csv', index=False)
         
     st.session_state['df'] = df
 
