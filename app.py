@@ -61,6 +61,7 @@ m = st.markdown("""
 <style>
 div.stButton > button:first-child {
     background-color: rgb(18, 12, 125);
+    color:white;
     font-size: 20px;
     border-radius: 10px;
 }
