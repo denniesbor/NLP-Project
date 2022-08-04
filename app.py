@@ -282,7 +282,8 @@ def get_time_sentiments(df):
   return fig
 
 # plot word cloud
-def plot_wc(df):
+def plot_wc(df, mask=None, max_words=200, max_font_size=100, figure_size=(8,12), color = 'white',
+                   title = None, title_size=40, image_color=False):
   """This function extracts tweets from a dataframe, split into individual terms
   and plots the most occuring words. Stopwords are excluded
   
@@ -296,21 +297,26 @@ def plot_wc(df):
     matplotlib figure object
   """
 
-  fig = plt.figure(figsize=(6,8))
-
+  fig = plt.figure(figsize=figure_size,dpi=300)
   text = " ".join(tweet for tweet in df["text"])
-  word_cloud = WordCloud(collocations = False,
-                         background_color = 'black', 
-                         colormap = 'Wistia', 
-                         min_font_size = 8,
-                         stopwords=st.session_state['stopwords'],
-                         width = 400,
-                         max_words = 100,
-                         height = 500).generate(text)
-  plt.imshow(word_cloud, interpolation = 'bilinear')
+  wordcloud = WordCloud(background_color=color,
+                  stopwords = st.session_state['stopwords'],
+                  max_words = max_words,
+                  max_font_size = max_font_size, 
+                  random_state = 42,
+                  width=400, 
+                  height=500,
+                  mask = mask)
+  wordcloud.generate(str(text))
+  if image_color:
+    image_colors = ImageColorGenerator(mask);
+    plt.imshow(wordcloud.recolor(color_func=image_colors), interpolation="bilinear");
+    plt.title(title, fontdict={'size': title_size,  
+                              'verticalalignment': 'bottom'})
+  else:
+    plt.imshow(wordcloud,interpolation="bilinear");
   plt.axis("off")
-  plt.axis("off")
-
+  
   return fig
 
 # tree map
@@ -396,7 +402,8 @@ def main():
             
         with col8:
             st.markdown(f"<h3 style='text-align: center; color: white; background-color:black; font-size:20px;'>Word Cloud({option}-{type})</h3>", unsafe_allow_html=True)
-            fig_wc = plot_wc(top_df)
+            pos_mask = np.array(Image.open('us_1.PNG'))
+            fig_wc = plot_wc(top_df,mask=pos_mask,color='white',max_font_size=100,title_size=30)
             st.pyplot(fig_wc)
             
         with col9:
